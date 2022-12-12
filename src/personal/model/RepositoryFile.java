@@ -23,12 +23,11 @@ public class RepositoryFile implements Repository {
 
     @Override
     public String CreateUser(User user) {
-
         List<User> users = getAllUsers();
         int max = 0;
         for (User item : users) {
             int id = Integer.parseInt(item.getId());
-            if (max < id){
+            if (max < id) {
                 max = id;
             }
         }
@@ -36,11 +35,56 @@ public class RepositoryFile implements Repository {
         String id = String.format("%d", newId);
         user.setId(id);
         users.add(user);
+        saveUsers(users);
+        return id;
+
+    }
+
+    public void saveUsers(List<User> users) {
         List<String> lines = new ArrayList<>();
         for (User item: users) {
             lines.add(mapper.map(item));
         }
         fileOperation.saveAllLines(lines);
-        return id;
     }
+
+    @Override
+    public User updateUser(User user) throws Exception {
+        List<User> users = getAllUsers();
+        User foundUser = findUserById(users, user.getId());
+        foundUser.setFirstName(user.getFirstName());
+        foundUser.setLastName(user.getLastName());
+        foundUser.setPhone(user.getPhone());
+        saveUsers(users);
+        return foundUser;
+    }
+
+    @Override
+    public User readUser(String userId) throws Exception {
+        List<User> users = getAllUsers();
+        return findUserById(users, userId);
+    }
+
+    @Override
+    public void deleteUser(User user) throws Exception {
+        List<User> users = getAllUsers();
+        User findedUser = findUserById(users, user.getId());
+        users.remove(findedUser);
+        saveUsers(users);
+    }
+
+    private User findUserById(List<User>users,String id) throws Exception{
+
+        for (User user:users
+        ) {
+            if (user.getId().equals(id)){return user;}
+
+        }
+
+        throw new Exception("User not found");
+
+    }
+
+
+
 }

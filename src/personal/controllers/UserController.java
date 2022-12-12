@@ -3,6 +3,7 @@ package personal.controllers;
 import personal.model.Repository;
 import personal.model.User;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserController {
@@ -12,18 +13,40 @@ public class UserController {
         this.repository = repository;
     }
 
-    public void saveUser(User user) {
+    public void saveUser(User user) throws Exception {
+        validateUser(user);
         repository.CreateUser(user);
     }
 
     public User readUser(String userId) throws Exception {
-        List<User> users = repository.getAllUsers();
-        for (User user : users) {
-            if (user.getId().equals(userId)) {
-                return user;
-            }
-        }
+        return repository.readUser(userId);
 
-        throw new Exception("User not found");
     }
+
+    public List<User> readUserList() {
+        return repository.getAllUsers();
+    }
+
+    public User updateUser(User user) throws Exception {
+        validateUser(user);
+        return repository.updateUser(user);
+
+    }
+
+    public void deleteUser(User user) throws Exception{
+        repository.deleteUser(user);
+    }
+
+    private void validateUser(User user) throws Exception {
+        if (user.getFirstName().isEmpty()) {
+            throw new Exception("Отсутствует имя");
+        }
+        if (user.getLastName().isEmpty()) {
+            throw new Exception("Отсутствует фамилия");
+        }
+        if (user.getPhone().isEmpty()) {
+            throw new Exception("Отсутствует телефон");
+        }
+    }
+
 }
