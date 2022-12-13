@@ -39,6 +39,9 @@ public class ViewUser {
                         break;
                     case LIST:
                         List<User> userList = userController.readUserList();
+                        if (userList.isEmpty()){
+                            System.out.println("ничего нет");
+                        }
                         for (User u : userList) {
                             System.out.println(u);
                             System.out.println();
